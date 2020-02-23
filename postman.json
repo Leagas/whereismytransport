@@ -1,0 +1,477 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Platform Collection",
+		"_postman_id": "2700857b-9b8f-c9e3-7c58-7c19bac7233c",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Has Access Token\"] = responseBody.has(\"access_token\");",
+							"",
+							"if(tests[\"Has Access Token\"])",
+							"{",
+							"    var data = JSON.parse(responseBody);",
+							"    var token = \"Bearer \" + data.access_token",
+							"    postman.setEnvironmentVariable(\"BearerToken\", token)",
+							"}",
+							"",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://identity.whereismytransport.com/connect/token",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "YOUR_CLIENT_ID",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "client_secret",
+							"value": "YOUR_CLIENT_SECRET",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "scope",
+							"value": "transitapi:all",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Agencies",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Is 200\"] = (responseCode.code === 200);\r",
+							"\r",
+							"if (tests[\"Is 200\"])\r",
+							"{\r",
+							"    var data = JSON.parse(responseBody);\r",
+							"\r",
+							"    tests[\"Has items\"] = data.length > 0\r",
+							"\tpostman.setEnvironmentVariable(\"AgencyId\", data[0].id);\r",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://platform.whereismytransport.com/api/agencies",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{BearerToken}}",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "wts",
+							"type": "file",
+							"enabled": true,
+							"value": ""
+						}
+					]
+				},
+				"description": "Retrieves a collection of agencies.\r\n\r\n`GET api/agencies?point={point}&radius={radius}&bbox={bbox}&agencies={agencies}&limit={limit}&offset={offset}&at={at}`\r\n\r\n| Parameter | Type | Description |\r\n| :-------------- | :--- | :---- |\r\n| point | [Point](#point) | The point from where to search for nearby agencies. Agencies will be returned in order of their distance from this point (from closest to furthest). |\r\n| radius | integer | The distance in metres from the point to search for nearby agencies. This filter is optional. |\r\n| bbox | [Bounding Box](#bounding-box) | The bounding box from where to retrieve agencies. This will be ignored if a point is provided in the query.  |\r\n| agencies | [Agencies Filter](#agencies-filter) | The list of agencies to filter the results by. |\r\n| limit | int | The maximum number of entities to be returned. Default is 100. |\r\n| offset | int | The offset of the first entity returned. Default is 0. |\r\n| at | [DateTime](#datetime) | The point in time from which to query. Defaults to the current date and time. |"
+			},
+			"response": []
+		},
+		{
+			"name": "Lines",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Is 200\"] = (responseCode.code === 200);",
+							"",
+							"if (tests[\"Is 200\"])",
+							"{",
+							"    var data = JSON.parse(responseBody);",
+							"",
+							"    if(data.length > 0) {",
+							"    \tpostman.setEnvironmentVariable(\"LineId\", data[0].id);",
+							"    }",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://platform.whereismytransport.com/api/lines?agencies={{AgencyId}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "{{BearerToken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "wts",
+							"type": "file",
+							"enabled": true,
+							"value": ""
+						}
+					]
+				},
+				"description": "Retrieves a collection of lines.\r\n\r\n`GET api/lines?agencies={agencies}&servesStops={servesStops}&limit={limit}&offset={offset}&at={at}`\r\n\r\n| Parameter | Type | Description |\r\n| :-------------- | :--- | :---- |\r\n| agencies | [Agencies Filter](#agencies-filter) | A comma-separated list of agency identifiers to filter the results by. |\r\n| servesStops | string | A comma-separated list of stop identifiers that represent stops which the returned lines must serve or visit. |\r\n| limit | int | The maximum number of entities to be returned. Default is 100. |\r\n| offset | int | The offset of the first entity returned. Default is 0. |\r\n| at | [DateTime](#datetime) | The point in time from which to query. Defaults to the current date and time. |"
+			},
+			"response": []
+		},
+		{
+			"name": "Line Timetables",
+			"request": {
+				"url": "https://platform.whereismytransport.com/api/lines/{{LineId}}/timetables",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{BearerToken}}",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "wts",
+							"type": "file",
+							"enabled": true,
+							"value": ""
+						}
+					]
+				},
+				"description": "Retrieves a timetable for a line, consisting of a list of departures on this line in order of departure time.\r\n\r\n`GET api/lines/{lineId}/timetables?earliestDepartureTime={earliestDepartureTime}&limit={limit}&at={at}`\r\n\r\n| Query Parameter | Type | Notes |\r\n| :-------------- | :--- | :---- |\r\n| lineId | string | Required line identifier to get timetables by. |\r\n| earliestDepartureTime | string | Optional earliest departure time on that line to be included in the timetable. |\r\n| limit | int | The maximum number of entities to be returned. Default is 10. |\r\n| at | [DateTime](#datetime) | The point in time from which to query. Defaults to the current date and time. |\r\n| departureStopId | string | Optional stop identifier - bounds results to only occur after this stop. |\r\n| arrivalStopId | string | Optional stop identifier - bounds results to only occur before this stop. |"
+			},
+			"response": []
+		},
+		{
+			"name": "Stops",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Is 200\"] = (responseCode.code === 200);",
+							"",
+							"if (tests[\"Is 200\"])",
+							"{",
+							"    var data = JSON.parse(responseBody);",
+							"    ",
+							"    if(data.length > 0) ",
+							"    {",
+							"        postman.setEnvironmentVariable(\"StopId\", data[0].id);",
+							"    }",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://platform.whereismytransport.com/api/stops",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "{{BearerToken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "wts",
+							"type": "file",
+							"enabled": true,
+							"value": ""
+						}
+					]
+				},
+				"description": "Retrieves a collection of stops.\r\n\r\n`GET api/stops?point={point}&radius={radius}&bbox={bbox}&modes={modes}&agencies={agencies}&servesLines={lineIds}&limit={limit}&offset={offset}&at={at}`\r\n\r\n| Parameter | Type | Description |\r\n| :-------------- | :--- | :---- |\r\n| point | [Point](#point) | The point from where to search for nearby stops. Stops will be returned in order of their distance from this point (from closest to furthest). |\r\n| radius | integer | The distance in metres from the point to search for nearby stops. This filter is optional. |\r\n| bbox | [Bounding Box](#bounding-box) | The bounding box from where to retrieve stops. This will be ignored if a point is provided in the query.  |\r\n| modes | string | A string of comma-separated [transit modes](#modes). |\r\n| agencies | [Agencies Filter](#agencies-filter) | A string of comma-separated agency identifiers to filter the results by. |\r\n| servesLines | string | A string of comma-separated line identifiers to filter the results by. |\r\n| limit | int | The maximum number of entities to be returned. Default is 100. |\r\n| offset | int | The offset of the first entity returned. Default is 0. |\r\n| at | [DateTime](#datetime) | The point in time from which to query. Defaults to the current date and time. |"
+			},
+			"response": []
+		},
+		{
+			"name": "Stop Timetables",
+			"request": {
+				"url": "https://platform.whereismytransport.com/api/stops/{{StopId}}/timetables",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{BearerToken}}",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "wts",
+							"type": "file",
+							"enabled": true,
+							"value": ""
+						}
+					]
+				},
+				"description": "Retrieves a timetable for a stop, consisting of a list of occurrences of a vehicle calling at this stop in order of arrival time.\r\n\r\n`GET api/stops/{stopId}/timetables?earliestArrivalTime={earliestArrivalTime}&limit={limit}&at={at}`\r\n\r\n| Parameter | Type | Description |\r\n| :-------------- | :--- | :---- |\r\n| stopId | string | The identifier of the stop. |\r\n| earliestArrivalTime | [DateTime](#datetime) | The earliest arrival date and time to include in the timetable. |\r\n| limit | int | The maximum number of entities to be returned. Default is 10. |\r\n| at | [DateTime](#datetime) | The point in time from which to query. Defaults to the current date and time. |"
+			},
+			"response": []
+		},
+		{
+			"name": "Journeys",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"if(responseCode.code == 201)\r",
+							"{\r",
+							"    var data = JSON.parse(responseBody);\r",
+							"    \r",
+							"    if(data.length > 0) \r",
+							"    {\r",
+							"        postman.setEnvironmentVariable(\"JourneyId\", data.id);\r",
+							"    }\r",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://platform.whereismytransport.com/api/journeys",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "{{BearerToken}}",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"geometry\":{\n        \"type\":\"Multipoint\",\n        \"coordinates\":[\n            [28.18291660398245,-25.746095547346062],\n            [28.036661110818386,-26.206582470217917]\n        ]\n    }\n}"
+				},
+				"description": "Creating a new journey is done by posting the journey's criteria to the resource.\r\n\r\n`POST api/journeys`\r\n\r\n| Attribute | Type | Required | Description |\r\n| :--------- | :--- | :--- | :---- |\r\n| geometry | [GeoJSON](#geojson) MultiPoint | Required | An ordered GeoJSON MultiPoint representing the departure and arrival points for the the journey. Exactly two points must be provided. |\r\n| earliestDepartureTime | [DateTime](#datetime) | Optional | The earliest desired departure date and time for the journey. Optional. Either earliestDepartureTime or latestArrivalTime must be provided, but not both. |\r\n| latestArrivalTime | [DateTime](#datetime) | Optional | The latest desired arrival date and time for the journey. Optional. Either earliestDepartureTime or latestArrivalTime must be provided, but not both. |\r\n| maxItineraries | integer | Optional | The maximum number of itineraries to return. This must be a value between or including 1 and 5. Default is 3. |\r\n| modes | Array of [Mode](#mode) | Optional | The explicit set of modes to use. If unset, all modes are used. |\r\n| agencies | Array of string | Optional | The list of agencies to query. |"
+			},
+			"response": []
+		},
+		{
+			"name": "Journeys",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Is 200\"] = (responseCode.code === 200);\r",
+							"\r",
+							"if (tests[\"Is 200\"])\r",
+							"{\r",
+							"    var data = JSON.parse(responseBody);\r",
+							"    if(data.length > 0)\r",
+							"    {\r",
+							"        tests[\"Valid schema\"] = tv4.validateResult(data, schema).valid;\r",
+							"    }\r",
+							"}\r",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://platform.whereismytransport.com/api/journeys/{{JourneyId}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "{{BearerToken}}",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "wts",
+							"type": "file",
+							"enabled": true,
+							"value": ""
+						}
+					]
+				},
+				"description": "Retrieving a previously requested journey and its itineraries can be done using the following request.\r\n\r\n`GET api/journeys/{journeyId}`\r\n\r\n| Parameter | Type | Description |\r\n| :-------------- | :--- | :---- |\r\n| journeyId | string | The identifier of the journey. |"
+			},
+			"response": []
+		},
+		{
+			"name": "Journey Itineraries",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Is 200\"] = (responseCode.code === 200);",
+							"",
+							"if (tests[\"Is 200\"])",
+							"{",
+							"    var data = JSON.parse(responseBody);",
+							"    ",
+							"    if(data.length > 0)",
+							"    {",
+							"        postman.setEnvironmentVariable(\"ItineraryId\", data[0][\"id\"]);",
+							"    }",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "https://platform.whereismytransport.com/api/journeys/{{JourneyId}}/itineraries",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "{{BearerToken}}",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "wts",
+							"value": "",
+							"type": "file",
+							"enabled": true
+						}
+					]
+				},
+				"description": "To retrieve a specific itinerary for a previously created journey, the following resource can be requested.\r\n\r\n`GET api/journeys/{journeyId}/itineraries/{itineraryId}?fareproducts={fareProductIds}`\r\n\r\n| Parameter | Type | Required | Description |\r\n| :-------------- | :--- | :--- | :---- |\r\n| journeyId | string | Required | The identifier of the journey. |\r\n| itineraryId | string | Required | The identifier of the itinerary. |\r\n| fareProductIds | string | Optional | A string of comma-separated [fare products](#fare-products) identifiers to use. |"
+			},
+			"response": []
+		}
+	]
+}

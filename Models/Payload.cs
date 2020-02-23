@@ -1,6 +1,6 @@
 namespace whereismytransport
 {
-    public class Request
+    public class Payload
     {
         public string type { get; set; }
     }
