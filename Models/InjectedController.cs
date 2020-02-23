@@ -4,9 +4,10 @@ namespace whereismytransport
 {
 	public class InjectedController: ControllerBase
     {
-        protected readonly TokenContext db;
+        protected readonly WIMTDataContext db;
 
-        public InjectedController(TokenContext context)
+		// This would be better if i didnt have to inject a specific DbContext here, not sure how though.
+        public InjectedController(WIMTDataContext context)
         {
             db = context;
         }

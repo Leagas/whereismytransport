@@ -16,7 +16,7 @@ namespace whereismytransport.Controllers
 		private readonly ILogger<AuthController> _logger;
 		private const string URL = "https://identity.whereismytransport.com";
 
-		public AuthController(ILogger<AuthController> logger, Secrets Secrets, TokenContext context): base(context)
+		public AuthController(ILogger<AuthController> logger, Secrets Secrets, WIMTDataContext context): base(context)
 		{
 			_logger = logger;
 			ClientId = Secrets.clientId;
@@ -27,8 +27,8 @@ namespace whereismytransport.Controllers
 		public async Task<IActionResult> Login()
 		{
 			/**
-				I included this here to simulate some sort of login/register process with our system, I imagine service providers
-				such as MyCiti would go through something like this to access the API to Add/Remove Vehicles etc.
+				I included this here to simulate some sort of login/register process with our system, I imagine service providers/transit operators
+				such as MyCiti dispatch/Driver would go through something like this to access the API to Add/Remove/CheckStatus against Vehicles etc.
 			*/
 
 			var payload = new Dictionary<string, string>

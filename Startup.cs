@@ -20,7 +20,11 @@ namespace whereismytransport
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-			services.AddDbContext<TokenContext>(ops => ops.UseInMemoryDatabase("Tokens"));
+			/**
+				Not sure of this implementation but this was one of the easiest ways i found
+				to persist data during runtime, and share between my controllers.
+			*/
+			services.AddDbContext<WIMTDataContext>(ops => ops.UseInMemoryDatabase("Tokens"));
             services.AddControllers();
 			services.AddScoped<Secrets>();
         }
