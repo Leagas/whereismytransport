@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace whereismytransport
 {
@@ -21,11 +23,14 @@ namespace whereismytransport
         }
 
         public IConfiguration Configuration { get; }
+		public Secrets Secrets { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+			services.AddDbContext<TokenContext>(ops => ops.UseInMemoryDatabase("Tokens"));
             services.AddControllers();
+			services.AddScoped<Secrets>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
