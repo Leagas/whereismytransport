@@ -9,14 +9,14 @@ namespace whereismytransport.Controllers
 {
 	[ApiController]
 	[Route("[controller]")]
-	public class AuthController : InjectedController
+	public class ClientController : InjectedController
 	{
 		private readonly string ClientId;
 		private readonly string ClientSecret;
-		private readonly ILogger<AuthController> _logger;
+		private readonly ILogger<ClientController> _logger;
 		private const string URL = "https://identity.whereismytransport.com";
 
-		public AuthController(ILogger<AuthController> logger, Secrets Secrets, WIMTDataContext context): base(context)
+		public ClientController(ILogger<ClientController> logger, Secrets Secrets, WIMTDataContext context): base(context)
 		{
 			_logger = logger;
 			ClientId = Secrets.clientId;

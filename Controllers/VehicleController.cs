@@ -13,5 +13,11 @@ namespace whereismytransport.Controllers
         {
             _logger = logger;
         }
+
+		[HttpPost("/add")]
+		public string Add([FromBody] Payload value)
+		{
+			return $"Added {value.type}";
+		}
     }
 }
