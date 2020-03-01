@@ -24,9 +24,8 @@ namespace whereismytransport.Controllers
 		[HttpPost("/addVehicle")]
 		public async Task<IActionResult> Add([FromBody] Payload value)
 		{
-			var result = await VehicleActor.Ask<VehicleActorResponse>(new AddVehicle(value.type), TimeSpan.FromSeconds(10));
-			Console.WriteLine(result);
-			return Ok("ok");
+			var result = await VehicleActor.Ask<VehicleActorResponse>(new AddVehicle(value.type));
+			return Ok(result._response);
 		}
     }
 }

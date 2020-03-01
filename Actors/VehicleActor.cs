@@ -9,7 +9,7 @@ namespace whereismytransport.Actors
     {
 		private bool _initialized;
 
-		private List<Vehicle> _vehicles;
+		private List<Vehicle> _vehicles = new List<Vehicle>();
 		public VehicleActor()
 		{
 			Receive<AddVehicle>(_ => !_initialized, msg =>
