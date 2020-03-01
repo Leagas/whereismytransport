@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace whereismytransport
+namespace whereismytransport.Models
 {
     public class WIMTDataContext: DbContext
     {

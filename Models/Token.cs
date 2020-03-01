@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace whereismytransport
+namespace whereismytransport.Models
 {
 	public class Token
 	{

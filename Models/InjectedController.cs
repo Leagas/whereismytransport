@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace whereismytransport
+namespace whereismytransport.Models
 {
 	public class InjectedController: ControllerBase
     {

@@ -1,4 +1,4 @@
-namespace whereismytransport
+namespace whereismytransport.Models
 {
     public class Payload
     {

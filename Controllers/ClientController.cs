@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
+using whereismytransport.Models;
 
 namespace whereismytransport.Controllers
 {
@@ -31,6 +32,16 @@ namespace whereismytransport.Controllers
 				such as MyCiti dispatch/Driver would go through something like this to access the API to Add/Remove/CheckStatus against Vehicles etc.
 			*/
 
+			if (ClientId == null)
+			{
+				throw new HttpRequestException("Invalid credentials");
+			};
+
+			if (ClientSecret == null)
+			{
+				throw new HttpRequestException("Invalid credentials");
+			}
+
 			var payload = new Dictionary<string, string>
 			{
 				{ "client_id",     ClientId },
@@ -51,7 +62,7 @@ namespace whereismytransport.Controllers
 				Token.access_token = jObject["access_token"].ToString();
 				Token.expires_in = jObject["expires_in"].ToString();
 
-				await db.AddAsync(Token);
+				await db.Tokens.AddAsync(Token);
 				await db.SaveChangesAsync();
 				return Ok(Token);
 			}
