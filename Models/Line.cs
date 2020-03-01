@@ -1,15 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace whereismytransport
+namespace whereismytransport.Models
 {
 	public class Line
 	{
 		[Required]
-        public int ID { get; set; }
+        public string id { get; set; }
 		[Required]
 		public string href { get; set; }
-		[Required]
-		public Agency agency { get; set; }
 		[Required]
 		public string name { get; set; }
 		[Required]
@@ -22,11 +20,8 @@ namespace whereismytransport
 		public string textColour { get; set; }
 	}
 
-	public class Agency
-	{
-		public string id {  get; set; }
-		public string href { get; set; }
-		public string name { get; set; }
-		public string culture { get; set; }
-	}
+	/*
+		Had to remove Agency as I was unalbe to resolve the following error:
+		The instance of entity type 'Agency' cannot be tracked because another instance with the key value
+	*/
 }

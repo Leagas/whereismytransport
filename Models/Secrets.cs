@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 
-namespace whereismytransport
+namespace whereismytransport.Models
 {
 	public class Secrets
 	{

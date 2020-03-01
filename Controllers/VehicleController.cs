@@ -1,5 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using whereismytransport.Models;
+using System.Threading.Tasks;
+using Akka.Actor;
+using System;
+using static whereismytransport.Protocols.VehicleProtocol;
 
 namespace whereismytransport.Controllers
 {
@@ -8,16 +13,20 @@ namespace whereismytransport.Controllers
     public class VehicleController : InjectedController
     {
         private readonly ILogger<VehicleController> _logger;
+		private IActorRef VehicleActor;
 
-        public VehicleController(ILogger<VehicleController> logger, WIMTDataContext context): base(context)
+        public VehicleController(ILogger<VehicleController> logger, WIMTDataContext context, ActorService actorService): base(context)
         {
             _logger = logger;
+			VehicleActor = actorService.VehicleActor;
         }
 
-		[HttpPost("/add")]
-		public string Add([FromBody] Payload value)
+		[HttpPost("/addVehicle")]
+		public async Task<IActionResult> Add([FromBody] Payload value)
 		{
-			return $"Added {value.type}";
+			var result = await VehicleActor.Ask<VehicleActorResponse>(new AddVehicle(value.type), TimeSpan.FromSeconds(10));
+			Console.WriteLine(result);
+			return Ok("ok");
 		}
     }
 }

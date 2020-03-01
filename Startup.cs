@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using whereismytransport.Models;
 
 namespace whereismytransport
 {
@@ -24,9 +25,13 @@ namespace whereismytransport
 				Not sure of this implementation but this was one of the easiest ways i found
 				to persist data during runtime, and share between my controllers.
 			*/
-			services.AddDbContext<WIMTDataContext>(ops => ops.UseInMemoryDatabase("Tokens"));
+			services.AddDbContext<WIMTDataContext>(ops => {
+				ops.UseInMemoryDatabase("Data");
+				ops.EnableSensitiveDataLogging();
+			});
             services.AddControllers();
 			services.AddScoped<Secrets>();
+			services.AddSingleton(new ActorService());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
